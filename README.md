@@ -1,4 +1,4 @@
-# Simple Kit Logger &nbsp;[![Build Status](https://travis-ci.org/piotrkowalczuk/sklog.svg?branch=master)](https://travis-ci.org/piotrkowalczuk/sklog)&nbsp; [![godoc reference](https://godoc.org/github.com/piotrkowalczuk/sklog?status.png)](https://godoc.org/github.com/piotrkowalczuk/sklog)&nbsp;[![Coverage Status](https://coveralls.io/repos/piotrkowalczuk/sklog/badge.svg?branch=master&service=github)](https://coveralls.io/github/piotrkowalczuk/sklog?branch=master)
+# Simple Kit Logger &nbsp;[![Build Status](https://travis-ci.org/piotrkowalczuk/sklog.svg?branch=master)](https://travis-ci.org/piotrkowalczuk/sklog)&nbsp;[![godoc reference](https://godoc.org/github.com/piotrkowalczuk/sklog?status.png)](https://godoc.org/github.com/piotrkowalczuk/sklog)&nbsp;[![Coverage Status](https://coveralls.io/repos/piotrkowalczuk/sklog/badge.svg?branch=master&service=github)](https://coveralls.io/github/piotrkowalczuk/sklog?branch=master)
 
 aka **sklog** is a wrapper for [go-kit/log](github.com/go-kit/kit/log) package that adds some shorthands, loggers and context packages so its easier to start:
 

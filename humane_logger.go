@@ -78,7 +78,7 @@ func (hl *humaneLogger) Log(keyvals ...interface{}) (err error) {
 // Formatter ...
 type Formatter interface {
 	Key() string
-	Format(io.Writer, interface{}) (int, error)
+	Format(writer io.Writer, value interface{}) (int, error)
 }
 
 type formatter struct {

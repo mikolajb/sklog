@@ -5,34 +5,40 @@ import (
 	"fmt"
 	"io"
 	"reflect"
-	"strconv"
 
 	"github.com/go-kit/kit/log"
 )
 
+const (
+	formatMessage     = "- %-60v "
+	formatBraces      = "[%v] "
+	formatBracesLevel = "[%-5v] "
+)
+
+var (
+	// DefaultHTTPFormatter ...
+	DefaultHTTPFormatter = NewSequentialFormatter(
+		NewKeyFormatter(formatBraces, KeyTimestamp),
+		NewKeyFormatter(formatBracesLevel, KeyLevel),
+		NewKeyFormatter(formatBraces, KeySubsystem),
+		NewKeyFormatter(formatBraces, KeyHTTPMethod),
+		NewKeyFormatter(formatBraces, KeyHTTPPath),
+		NewKeyFormatter(formatBraces, KeyHTTPStatus),
+		NewKeyFormatter(formatMessage, KeyMessage),
+	)
+)
+
 type humaneLogger struct {
 	io.Writer
-	formatters []Formatter
-}
-
-// NewHumaneLogger returns a Logger that encodes keyvals to the Writer in a human friendly way.
-func NewHumaneLogger(writer io.Writer) log.Logger {
-	return NewHumaneLoggerWithFormatters(writer, []Formatter{
-		NewBracesFormatter(KeyTimestamp, 0),
-		NewBracesFormatter(KeyLevel, 5),
-		NewBracesFormatter(KeySubsystem, 0),
-		NewBracesFormatter(KeyHTTPMethod, 0),
-		NewBracesFormatter(KeyHTTPStatus, 0),
-		NewMessageFormatter(KeyMessage),
-	})
+	formatter Formatter
 }
 
 // NewHumaneLoggerWithFormatters like NewHumaneLogger allocates new instance,
 // but allow to pass custom collection of formatters.
-func NewHumaneLoggerWithFormatters(writer io.Writer, formatters []Formatter) log.Logger {
+func NewHumaneLogger(writer io.Writer, formatter Formatter) log.Logger {
 	return &humaneLogger{
-		Writer:     writer,
-		formatters: formatters,
+		Writer:    writer,
+		formatter: formatter,
 	}
 }
 
@@ -51,22 +57,10 @@ func (hl *humaneLogger) Log(keyvals ...interface{}) (err error) {
 		merge(m, k, v)
 	}
 
-	for _, formatter := range hl.formatters {
-	MapLoop:
-		for key, value := range m {
-			if formatter.Key() == key {
-				formatter.Format(b, value)
-				delete(m, key)
-				break MapLoop
-			}
-		}
-	}
-
-	for key, value := range m {
-		_, err = fmt.Fprintf(b, "%s=%v  ", key, value)
-		if err != nil {
-			return
-		}
+	_, err = hl.formatter.Format(b, m)
+	if err != nil {
+		b.Reset()
+		return err
 	}
 
 	b.WriteRune('\n')
@@ -77,32 +71,23 @@ func (hl *humaneLogger) Log(keyvals ...interface{}) (err error) {
 
 // Formatter ...
 type Formatter interface {
-	Key() string
-	Format(writer io.Writer, value interface{}) (int, error)
+	Format(io.Writer, interface{}) (int, error)
 }
 
-type formatter struct {
+// KeyFormatter ...
+type KeyFormatter interface {
+	Formatter
+	Key() string
+}
+
+type keyFormatter struct {
 	key      string
 	function func(io.Writer, interface{}) (int, error)
 }
 
-func (f *formatter) Key() string {
-	return f.key
-}
-
-func (f *formatter) Format(w io.Writer, v interface{}) (int, error) {
-	return f.function(w, v)
-}
-
-// NewBracesFormatter writes value for given key with surrounding braces.
-func NewBracesFormatter(key string, length int) Formatter {
-	format := "[%v] "
-
-	if length > 0 {
-		format = "[%-" + strconv.FormatInt(int64(length), 10) + "v] "
-	}
-
-	return &formatter{
+// NewKeyFormatter writes value for given key using given format.
+func NewKeyFormatter(format, key string) KeyFormatter {
+	return &keyFormatter{
 		key: key,
 		function: func(w io.Writer, value interface{}) (int, error) {
 			return fmt.Fprintf(w, format, value)
@@ -110,17 +95,66 @@ func NewBracesFormatter(key string, length int) Formatter {
 	}
 }
 
-// NewMessageFormatter writes value for given key prefixed with minus.
-func NewMessageFormatter(key string) Formatter {
-	format := "- %-60v "
-	return &formatter{
-		key: key,
-		function: func(w io.Writer, value interface{}) (int, error) {
-			return fmt.Fprintf(w, format, value)
-		},
-	}
+func (kf *keyFormatter) Key() string {
+	return kf.key
 }
 
+func (kf *keyFormatter) Format(w io.Writer, v interface{}) (int, error) {
+	return kf.function(w, v)
+}
+
+type sequentialFormatter struct {
+	formatters []KeyFormatter
+}
+
+// NewSequentialFormatter ...
+func NewSequentialFormatter(f ...KeyFormatter) Formatter {
+	return &sequentialFormatter{formatters: f}
+}
+
+// Format implements Formatter interface.
+func (sf *sequentialFormatter) Format(w io.Writer, v interface{}) (n int, err error) {
+	var n1, n2 int
+
+	m, ok := v.(map[string]interface{})
+	if !ok {
+		err = fmt.Errorf("sklog: sequential formatter epxects map[string]interface{} got %T", v)
+		return
+	}
+
+	for _, formatter := range sf.formatters {
+	MapLoop:
+		for key, value := range m {
+			if formatter.Key() == key {
+				n1, err = formatter.Format(w, value)
+				n += n1
+				if err != nil {
+					return
+				}
+				delete(m, key)
+				break MapLoop
+			}
+		}
+	}
+
+	n2, err = writeKV(w, m)
+	n += n2
+
+	return
+}
+
+func writeKV(w io.Writer, m map[string]interface{}) (n int, err error) {
+	var n1 int
+	for key, value := range m {
+		n1, err = fmt.Fprintf(w, "%s=%v  ", key, value)
+		n += n1
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
 func merge(dst map[string]interface{}, k, v interface{}) {
 	var key string
 	switch x := k.(type) {

@@ -51,6 +51,11 @@ func SetTimestampFunc(fn func() string) {
 	timestampFunc = fn
 }
 
+// Log log message with timestamp.
+func Log(logger log.Logger, keyval ...interface{}) {
+	logger.Log(append(keyval, KeyTimestamp, timestampFunc())...)
+}
+
 // Debug log message and given context with level debug.
 func Debug(logger log.Logger, msg string, keyval ...interface{}) {
 	logger.Log(append(keyval, KeyLevel, LevelDebug, KeyMessage, msg, KeyTimestamp, timestampFunc())...)

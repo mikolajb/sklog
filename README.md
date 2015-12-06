@@ -50,16 +50,15 @@ Each package provide logic necessary to get information from `error` objects.
 
 ## Loggers
 ### [Humane Logger](godoc.org/github.com/piotrkowalczuk/sklog/#NewHumaneLogger)
-Logger that prints easy to read (for humans) output, usefull for development. Inspired by [Sirupsen/logrus](github.com/Sirupsen/logrus). It provides basic implementation that recognize such keys:
+Logger that prints easy to read (for humans) output, usefull for development. Inspired by [Sirupsen/logrus](github.com/Sirupsen/logrus). It can be used with `DefaultHTTPFormatter` that recognize such keys:
 
 * `timestamp`
-* `msg`
 * `level`
 * `subsystem`
 * `http_method`
+* `http_path`
 * `http_status`
-
-But also allow to provide custom list of formatters.
+* `msg`
 
 #### Output
 

@@ -42,9 +42,10 @@ func main() {
 ## Context Packages
 Each package provide logic necessary to get information from `error` objects.
 
-* ctxstd - standard library context builder, in general imports all packages from stdlib. Made for bootstraping.
+* ctxstdjson - [encoding/json](golang.org/pkg/encoding/json/)
 * ctxpq - [lib/pq](github.com/lib/pq)
 * ctxmgo - [gopkg.in/mgo.v2]("gopkg.in/mgo.v2")
+
 
 
 ## Loggers

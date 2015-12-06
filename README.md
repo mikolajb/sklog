@@ -42,7 +42,7 @@ func main() {
 ## Context Packages
 Each package provide logic necessary to get information from `error` objects.
 
-* ctxstdjson - [encoding/json](golang.org/pkg/encoding/json/)
+* ctxjson - [encoding/json](golang.org/pkg/encoding/json/)
 * ctxpq - [lib/pq](github.com/lib/pq)
 * ctxmgo - [gopkg.in/mgo.v2]("gopkg.in/mgo.v2")
 

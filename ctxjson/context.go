@@ -1,4 +1,4 @@
-package ctxstdjson
+package ctxjson
 
 import (
 	"encoding/json"

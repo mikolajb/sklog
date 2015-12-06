@@ -1,4 +1,4 @@
-package ctxstdjson_test
+package ctxjson_test
 
 import (
 	"bytes"
@@ -9,8 +9,8 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/piotrkowalczuk/sklog"
+	"github.com/piotrkowalczuk/sklog/ctxjson"
 	"github.com/piotrkowalczuk/sklog/ctxstd"
-	"github.com/piotrkowalczuk/sklog/ctxstdjson"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +18,7 @@ func TestNewContextGeneric(t *testing.T) {
 	b := bytes.NewBuffer(nil)
 	l := log.NewJSONLogger(b)
 
-	sklog.SetContextErrorFunc(ctxstdjson.NewContextError)
+	sklog.SetContextErrorFunc(ctxjson.NewContextError)
 
 	for name, data := range successTestData {
 		err := ctxstd.NewContextErrorGeneric(l, data.error).Log("key", "value")

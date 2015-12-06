@@ -10,7 +10,7 @@ type testLogger struct {
 	t *testing.T
 }
 
-// NewMultiLogger returns a Logger that wrapps testing object.
+// NewMultiLogger returns a Logger that wraps testing object.
 func NewTestLogger(t *testing.T) log.Logger {
 	return &testLogger{
 		t: t,

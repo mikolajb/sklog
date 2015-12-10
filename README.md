@@ -25,7 +25,7 @@ func main() {
 	sklog.Info(logger, "just an info", "key", "val")
 	sklog.Debug(logger, "some debug information", "key", "value")
 	sklog.Error(logger, errors.New("example: fake error"), "key", "value")
-	// sklog.Fatal(logger, errors.New("example: fake error that exists"), "key", "value")
+	// sklog.Fatal(logger, errors.New("example: fake error that exits"), "key", "value")
 	// sklog.Panic(logger, errors.New("example: fake error that panics"), "key", "value")
 }
 

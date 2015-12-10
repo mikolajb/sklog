@@ -63,14 +63,14 @@ Logger that prints easy to read (for humans) output, usefull for development. In
 #### Output
 
 ```bash
-[2015-10-25T13:16:09+01:00] [debug] [api-server] - request processed    http_method=get
+[2015-10-25T13:16:09+01:00] [debug] [api-server] [post] [/login] [200] - request processed    username=email@example.com
 ```
 
-### [Test Logger](godoc.org/github.com/piotrkowalczuk/sklog/#NewTestLogger)
+### [Test Logger](http://godoc.org/github.com/piotrkowalczuk/sklog/#NewTestLogger)
 Logger that wraps `*testing.T` object. It is using only `msg` key value.
 
-### [GRPC Logger](godoc.org/github.com/piotrkowalczuk/sklog/#NewGRPCLogger)
+### [GRPC Logger](http://godoc.org/github.com/piotrkowalczuk/sklog/#NewGRPCLogger)
 Logger that provides API expected grpc.Logger interface.
  
-### [Multi Logger](godoc.org/github.com/piotrkowalczuk/sklog/#NewMultiLogger)
+### [Multi Logger](http://godoc.org/github.com/piotrkowalczuk/sklog/#NewMultiLogger)
 Logger that aggregates multiple loggers into one.

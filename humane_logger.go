@@ -6,6 +6,8 @@ import (
 	"io"
 	"reflect"
 
+	"strings"
+
 	"github.com/go-kit/kit/log"
 )
 
@@ -87,6 +89,14 @@ type keyFormatter struct {
 
 // NewKeyFormatter writes value for given key using given format.
 func NewKeyFormatter(format, key string) KeyFormatter {
+	if format == "" || !strings.Contains(format, "%") {
+		return &keyFormatter{
+			key: key,
+			function: func(w io.Writer, value interface{}) (int, error) {
+				return 0, nil
+			},
+		}
+	}
 	return &keyFormatter{
 		key: key,
 		function: func(w io.Writer, value interface{}) (int, error) {

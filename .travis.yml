@@ -11,4 +11,4 @@ script:
   - go build
   - go test -v ./...
   - go test -covermode=count -coverprofile=profile.cov
-  - $HOME/gopath/bin/goveralls -coverprofile=profile.cov -repotoken S7Knqu960fkLwIysF9Zi3YdpZeyoKv0TR
+  - $HOME/gopath/bin/goveralls -coverprofile=profile.cov -repotoken woB7j7l3nkcexRcrGhPDs66wdn7wwxZKn

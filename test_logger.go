@@ -1,6 +1,8 @@
 package sklog
 
 import (
+	"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/go-kit/kit/log"
@@ -31,7 +33,16 @@ func (tl *testLogger) Log(keyvals ...interface{}) error {
 		merge(m, k, v)
 	}
 
-	tl.t.Log(m[KeyMessage])
+	buf := bytes.NewBuffer(nil)
+	if msg, ok := m[KeyMessage]; ok {
+		fmt.Fprintf(buf, "%-60s", msg)
+		delete(m, KeyMessage)
+
+	}
+	for k, v := range m {
+		fmt.Fprintf(buf, "%s=%v  ", k, v)
+	}
+	tl.t.Log(buf.String())
 
 	return nil
 }

@@ -21,6 +21,7 @@ func NewTestLogger(t *testing.T) log.Logger {
 
 // Log implements Logger interface.
 func (tl *testLogger) Log(keyvals ...interface{}) error {
+	tl.t.Helper()
 	n := (len(keyvals) + 1) / 2 // +1 to handle case when len is odd
 	m := make(map[string]interface{}, n)
 

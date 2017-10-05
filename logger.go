@@ -53,37 +53,58 @@ func SetTimestampFunc(fn func() string) {
 
 // Log log message with timestamp.
 func Log(logger log.Logger, keyval ...interface{}) {
+	if tl, ok := logger.(*testLogger); ok {
+		tl.t.Helper()
+	}
 	logger.Log(append(keyval, KeyTimestamp, timestampFunc())...)
 }
 
 // Debug log message and given context with level debug.
 func Debug(logger log.Logger, msg string, keyval ...interface{}) {
+	if tl, ok := logger.(*testLogger); ok {
+		tl.t.Helper()
+	}
 	logger.Log(append(keyval, KeyLevel, LevelDebug, KeyMessage, msg, KeyTimestamp, timestampFunc())...)
 }
 
 // Info log message and given context with level info.
 func Info(logger log.Logger, msg string, keyval ...interface{}) {
+	if tl, ok := logger.(*testLogger); ok {
+		tl.t.Helper()
+	}
 	logger.Log(append(keyval, KeyLevel, LevelInfo, KeyMessage, msg, KeyTimestamp, timestampFunc())...)
 }
 
 // Warning log message using given logger.
 func Warning(logger log.Logger, msg string, keyval ...interface{}) {
+	if tl, ok := logger.(*testLogger); ok {
+		tl.t.Helper()
+	}
 	logger.Log(append(keyval, KeyLevel, LevelWarning, KeyMessage, msg, KeyTimestamp, timestampFunc())...)
 }
 
 // Error log error using given logger.
 func Error(logger log.Logger, err error, keyval ...interface{}) {
+	if tl, ok := logger.(*testLogger); ok {
+		tl.t.Helper()
+	}
 	contextErrorFunc(logger, err).Log(append(keyval, KeyLevel, LevelError, KeyMessage, err.Error(), KeyTimestamp, timestampFunc())...)
 }
 
 // Fatal log error using given logger and exists an application with status code 1.
 func Fatal(logger log.Logger, err error, keyval ...interface{}) {
+	if tl, ok := logger.(*testLogger); ok {
+		tl.t.Helper()
+	}
 	contextErrorFunc(logger, err).Log(append(keyval, KeyLevel, LevelFatal, KeyMessage, err.Error(), KeyTimestamp, timestampFunc())...)
 	os.Exit(1)
 }
 
 // Panic log error using given logger and panics.
 func Panic(logger log.Logger, err error, keyval ...interface{}) {
+	if tl, ok := logger.(*testLogger); ok {
+		tl.t.Helper()
+	}
 	contextErrorFunc(logger, err).Log(append(keyval, KeyLevel, LevelPanic, KeyMessage, err.Error(), KeyTimestamp, timestampFunc())...)
 	panic(fmt.Sprint(append(keyval, KeyLevel, LevelPanic, KeyMessage, err)...))
 }
